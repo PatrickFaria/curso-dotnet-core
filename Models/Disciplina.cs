@@ -20,7 +20,7 @@ namespace SmartSchool.API.Models
         public int Id { get; private set; }
         public string Nome { get; private set; }
         public int ProfesssorId { get; private set; }
-        public Professor professor { get; private set; }
+        public Professor Professor { get; private set; }
 
         public IEnumerable<AlunoDisciplina> AlunosDisciplinas { get; set; }
     }

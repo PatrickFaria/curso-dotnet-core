@@ -63,7 +63,7 @@ namespace SmartSchool.API.Controllers
             {
                 return BadRequest("Professor não encontrado");
             }
-            this.repo.Upadate(professor);
+            this.repo.Update(professor);
             if (this.repo.SaveChanges())
             {
                 return Ok(professor);

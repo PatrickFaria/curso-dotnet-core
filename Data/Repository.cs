@@ -24,41 +24,80 @@ namespace SmartSchool.API.Data
             this.context.Remove(entity);
         }
 
-        public Aluno[] getAllAlunos(bool includeDisciplina)
+        public Aluno[] GetAllAlunos(bool includeProfessor = false)
         {
             IQueryable<Aluno> query = this.context.Alunos;
-            if (includeDisciplina)
+            if (includeProfessor)
             {
                 query = query.Include(a => a.AlunosDisciplinas).ThenInclude(ad => ad.Disciplina)
-                    .ThenInclude(d => d.professor);
+                    .ThenInclude(d => d.Professor);
             }
             query = query.AsNoTracking().OrderBy(aluno => aluno.Id);
             return query.ToArray();
         }
 
-        public Aluno[] getAllAlunosByDisciplinaId()
+        public Aluno[] GetAllAlunosByDisciplinaId(int disciplinaId, bool includeProfessor = false)
         {
-            throw new NotImplementedException();
+            IQueryable<Aluno> query = this.context.Alunos;
+            if (includeProfessor)
+            {
+                query = query.Include(a => a.AlunosDisciplinas).ThenInclude(ad => ad.Disciplina)
+                    .ThenInclude(d => d.Professor);
+            }
+            query = query.AsNoTracking().OrderBy(aluno => aluno.Id)
+                .Where(ad => ad.AlunosDisciplinas.Any(d => d.DisciplinaId == disciplinaId));
+            return query.ToArray();
         }
 
-        public Professor[] getAllProfessores()
+        public Professor[] GetAllProfessores(bool includeAluno)
         {
-            throw new NotImplementedException();
+            IQueryable<Professor> query = this.context.Professores;
+            if (includeAluno)
+            {
+                query = query.Include(p => p.Disciplinas).ThenInclude(d => d.AlunosDisciplinas)
+                    .ThenInclude(ad => ad.Aluno);
+            }
+            query = query.AsNoTracking().OrderBy(p => p.Id);
+            return query.ToArray();
         }
 
-        public Professor[] getAllProfessoresByDisciplinaId()
+        public Professor[] GetAllProfessoresByDisciplinaId(int disciplinaId, bool includeAluno = false)
         {
-            throw new NotImplementedException();
+            IQueryable<Professor> query = this.context.Professores;
+            if (includeAluno)
+            {
+                query = query.Include(p => p.Disciplinas).ThenInclude(d => d.AlunosDisciplinas)
+                    .ThenInclude(ad => ad.Aluno);
+            }
+            query = query.AsNoTracking().OrderBy(p => p.Id)
+                .Where(aluno => aluno.Disciplinas.Any(d => d.Id == disciplinaId));
+            return query.ToArray();
         }
 
-        public Aluno[] getAlunoById()
+        public Aluno GetAlunoById(int alunoId, bool includeProfessor = false)
         {
-            throw new NotImplementedException();
+            IQueryable<Aluno> query = this.context.Alunos;
+            if (includeProfessor)
+            {
+                query = query.Include(a => a.AlunosDisciplinas).ThenInclude(ad => ad.Disciplina)
+                    .ThenInclude(d => d.Professor);
+            }
+            query = query.AsNoTracking().OrderBy(aluno => aluno.Id)
+                .Where(aluno => aluno.Id == alunoId);
+            return query.FirstOrDefault();
         }
 
-        public Professor[] getProfessorById()
+        public Professor GetProfessorById(int professorId, bool includeAluno = false)
         {
-            throw new NotImplementedException();
+            IQueryable<Professor> query = this.context.Professores;
+            if (includeAluno)
+            {
+                query = query.Include(p => p.Disciplinas).ThenInclude(d => d.AlunosDisciplinas)
+                    .ThenInclude(ad => ad.Aluno);
+            }
+            query = query.AsNoTracking().OrderBy(p => p.Id)
+                .Where(prof => prof.Id == professorId);
+            return query.FirstOrDefault();
         }
 
         public bool SaveChanges()
@@ -66,7 +105,7 @@ namespace SmartSchool.API.Data
             return this.context.SaveChanges() > 0;
         }
 
-        public void Upadate<T>(T entity) where T : class
+        public void Update<T>(T entity) where T : class
         {
             this.context.Update(entity);
         }

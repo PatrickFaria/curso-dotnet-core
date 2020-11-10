@@ -60,7 +60,7 @@ namespace SmartSchool.API.Controllers
             {
                 return BadRequest("Aluno não encontrado");
             }
-            this.repo.Upadate(aluno);
+            this.repo.Update(aluno);
             if (this.repo.SaveChanges())
             {
                 return Ok(aluno);
@@ -77,7 +77,7 @@ namespace SmartSchool.API.Controllers
             {
                 return BadRequest("Aluno não encontrado");
             }
-            this.repo.Upadate(aluno);
+            this.repo.Update(aluno);
             this.repo.SaveChanges();
             return Ok(aluno);
         }
@@ -86,7 +86,7 @@ namespace SmartSchool.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var aluno = this.context.Alunos.FirstOrDefault(aluno => aluno.Id == id);
+            var aluno = this.repo.GetAlunoById(id);
             if(aluno == null)
             {
                 return BadRequest("Aluno não encontrado");
