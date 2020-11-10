@@ -16,9 +16,12 @@ namespace SmartSchool.API.Controllers
     public class ProfessorController : ControllerBase
     {
         private readonly SmartContext context;
-        public ProfessorController(SmartContext context)
+        private readonly IRepository repo;
+
+        public ProfessorController(SmartContext context, IRepository repo)
         {
             this.context = context;
+            this.repo = repo;
         }
         // GET: api/<ProfessorController>
         [HttpGet]
@@ -43,9 +46,12 @@ namespace SmartSchool.API.Controllers
         [HttpPost]
         public IActionResult Post(Professor professor)
         {
-            this.context.Add(professor);
-            this.context.SaveChanges();
-            return Ok(professor);
+            this.repo.Add(professor);
+            if (this.repo.SaveChanges())
+            {
+                return Ok(professor);
+            }
+            return BadRequest("Professor não Cadastrado");
         }
 
         // PUT api/<ProfessorController>/5
@@ -57,9 +63,12 @@ namespace SmartSchool.API.Controllers
             {
                 return BadRequest("Professor não encontrado");
             }
-            this.context.Update(professor);
-            this.context.SaveChanges();
-            return Ok(professor);
+            this.repo.Upadate(professor);
+            if (this.repo.SaveChanges())
+            {
+                return Ok(professor);
+            }
+            return BadRequest("Professor não Atualizado");
         }
 
         // DELETE api/<ProfessorController>/5
@@ -71,9 +80,12 @@ namespace SmartSchool.API.Controllers
             {
                 return BadRequest("Professor não encontrado");
             }
-            this.context.Remove(id);
-            this.context.SaveChanges();
-            return Ok();
+            this.repo.Delete(prof);
+            if (this.repo.SaveChanges())
+            {
+                return Ok("Professor deletado");
+            }
+            return BadRequest("Professor não deletado");
         }
     }
 }
